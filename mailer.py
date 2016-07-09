@@ -1,32 +1,27 @@
-def get_emails():
-    emails = []
+import smtplib
 
-    try:
-        email_file = open('emails.txt', 'r')
+def send_emails(emails, schedule, forecast):
+    # connect to the smtp server
+    server = smtplib.SMTP('smtp.gmail.com', '587')
+    # Start TLS encryption
+    server.starttls()
+    #login
+    password = input("What's your password?")
+    from_email = 'wangxbl56@gmail.com' #  needs a email
+    server.login(from_email, password)
 
-        for line in email_file:
-            (email, name) = line.split(',')
-            emails[email] = name.strip()
+    # Send to entire email list
+    for to_email, name in emails.items():
+        message = 'Subject: Welcome to the Cirus:\n'
+        message += 'Hi ' + name + '!\n\n'
+        message += forecast + '\n\n'
+        message += schedule + '\n\n'
+        message += 'Hope to see you there!'
+        server.sendmail(from_email, to_email, message)
 
-    except FileNotFoundError as err:
-        print(err)
 
-    return emails
+    server.quit()
 
-def get_schedule():
-    try:
-        schedule_file = open('schedule.txt', 'r')
-
-        schedule = schedule_file.read()
-
-    return schedule
-
-def main():
-    emails = get_emails()
-    print(emails)
-
-    schedule = get_schedule()
-    print (schedule)
 
 
 
